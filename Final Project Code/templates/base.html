@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Traffic Analysis System{% endblock %}</title>
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Particle.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    
+    <script>
+        AOS.init();
+      </script>
+
+    {% block extra_css %}{% endblock %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-dismiss flash messages
+            document.querySelectorAll('.flash-message').forEach(function(message) {
+                const dismissTime = message.getAttribute('data-auto-dismiss');
+                if (dismissTime) {
+                    setTimeout(function() {
+                        message.style.opacity = '0';
+                        setTimeout(function() {
+                            message.remove();
+                        }, 200);
+                    }, parseInt(dismissTime));
+                }
+            });
+        });
+    </script>
+    <style>
+        .title-background {
+            background-color: transparent !important; 
+        }
+        /* Mobile Menu Styles */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        .hamburger {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .hamburger .line1,
+        .hamburger .line2,
+        .hamburger .line3 {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: center;
+        }
+        .hamburger.active {
+            transform: rotate(180deg);
+        }
+        .hamburger.active .line1 {
+            transform: translateY(6px) rotate(45deg);
+        }
+        .hamburger.active .line2 {
+            opacity: 0;
+            transform: scale(0);
+        }
+        .hamburger.active .line3 {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+        .hamburger:hover {
+            transform: scale(1.1);
+        }
+        .hamburger.active:hover {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        .full_opacity {
+            opacity: 100% !important;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 via-white to-gray-300 min-h-screen flex flex-col relative">
+    <div class="absolute inset-0 bg-gradient-to-br from-gray-100 via-white to-gray-300 -z-20"></div>
+    <!-- Particle Background -->
+    <div id="particles-js" class="fixed inset-0 -z-10"></div>
+
+    <!-- Navigation -->
+    <!-- <nav class="bg-white/100 backdrop-blur-xl shadow-lg sticky top-0 z-1 full_opacity"> -->
+    <nav class="bg-white/100 shadow-lg sticky top-0 z-1 full_opacity">
+        <div class="relative w-full">
+            <div class="absolute right-5 top-0 h-16 flex items-center space-x-2">
+                {% if 'user' in session %}
+                <span class="text-gray-700">Welcome, {{ session['user'] }}</span>
+                <a href="{{ url_for('main.logout') }}" 
+                   class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 shadow-lg hover:shadow-xl">
+                    Logout
+                </a>
+                {% else %}
+                <a href="{{ url_for('main.login') }}" 
+                   class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 shadow-lg hover:shadow-xl">
+                    Login
+                </a>
+                {% endif %}
+            </div>
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between h-16">
+                <!-- Main content starts here -->
+                <div class="flex ml-8">
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="{{ url_for('main.home') }}" class="text-2xl font-bold text-gray-800 hover:text-indigo-600 transition-colors duration-300">
+                            <svg class="h-8 w-8 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    {% if 'user' in session %}
+                        <a href="{{ url_for('main.home') }}" 
+                           class="{% if request.endpoint == 'main.home' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
+                            Home
+                        </a>
+                        <a href="{{ url_for('main.dashboard') }}"
+                           class="{% if request.endpoint == 'main.dashboard' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
+                            Dashboard
+                        </a>
+                        <a href="{{ url_for('main.input_data') }}"
+                           class="{% if request.endpoint == 'main.input_data' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
+                            Input Data
+                        </a>
+                        <a href="{{ url_for('main.model_report') }}"
+                           class="{% if request.endpoint == 'main.model_report' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
+                            Model Report
+                        </a>
+                    {% endif %}
+                        <a href="{{ url_for('main.about') }}"
+                           class="{% if request.endpoint == 'main.about' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
+                            About
+                        </a>
+                        <a href="{{ url_for('main.contact') }}"
+                           class="{% if request.endpoint == 'main.contact' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
+                            Contact
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden sm:flex sm:items-center">
+                    <!-- Placeholder for future items -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Menu Button -->
+    <div class="fixed top-20 right-4 z-50">
+        <button type="button" id="mobile-menu-button" class="hamburger inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 bg-white/80 backdrop-blur-lg shadow-lg">
+            <span class="sr-only">Open main menu</span>
+            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path class="line1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16" />
+                <path class="line2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12h16" />
+                <path class="line3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 18h16" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu fixed inset-y-0 right-0 w-80 bg-white/95 backdrop-blur-lg shadow-lg z-40">
+        <div class="pt-16 px-4">
+            <div class="flex flex-col space-y-4">
+                {% if 'user' in session %}
+                <a href="{{ url_for('main.home') }}" 
+                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
+                    Home
+                </a>
+                <a href="{{ url_for('main.dashboard') }}"
+                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
+                    Dashboard
+                </a>
+                <a href="{{ url_for('main.input_data') }}"
+                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
+                    Input Data
+                </a>
+                <a href="{{ url_for('main.model_report') }}"
+                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
+                    Model Report
+                </a>
+                {% endif %}
+                <a href="{{ url_for('main.about') }}"
+                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
+                    About
+                </a>
+                <a href="{{ url_for('main.contact') }}"
+                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
+                    Contact
+                </a>
+                {% if 'user' in session %}
+                <div class="pt-4 border-t border-gray-200">
+                    <span class="text-gray-700 px-3 py-2 block">Welcome, {{ session['user'] }}</span>
+                    <a href="{{ url_for('main.logout') }}" 
+                       class="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                        Logout
+                    </a>
+                </div>
+                {% else %}
+                <a href="{{ url_for('main.login') }}" 
+                   class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                    Login
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <!-- Flash Messages Container -->
+    <!-- Flash Messages -->
+    <div class="container mx-auto px-4 mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message w-full max-w-7xl mx-auto bg-{{ category }}-50 p-4 rounded-lg shadow-lg transform transition-all duration-300" style="opacity: 1; transition: opacity 0.5s ease-out;" data-auto-dismiss="2000">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                {% if category == 'success' %}
+                                <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                                {% elif category == 'error' or category == 'danger' %}
+                                <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                                </svg>
+                                {% else %}
+                                <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                                </svg>
+                                {% endif %}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-{{ category }}-800">{{ message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+    </div>
+
+    <main class="flex-grow w-full">
+        <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8">
+        {% block content %}{% endblock %}
+        </div>
+    </main>
+    
+    <!-- Custom JavaScript -->
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/particles.js') }}"></script>
+    
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenuButton.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileMenu.contains(e.target) && !mobileMenuButton.contains(e.target)) {
+                mobileMenuButton.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 
