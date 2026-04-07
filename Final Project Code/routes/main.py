@@ -15,27 +15,7 @@ main = Blueprint('main', __name__)
 model_manager = None
 limiter = None
 
-# Dummy user database - In production, use a proper database
-users = {
-    'admin': {
-        'password': 'admin123',  # In production, use hashed passwords
-        'role': 'admin'
-    },
-    'Chirag' : {
-        'password':'Chirag123',
-        'role' : 'admin' 
-    },
-
-    'Nipun' : {
-        'password':'Nipun123',
-        'role' : 'admin',
-    },
-
-    'Sethu' : {
-        'password':'Sethu123',
-        'role' : 'admin',
-    }
-}
+from models.database import User
 
 def login_required(f):
     @wraps(f)
@@ -71,8 +51,9 @@ def login():
         username = form.username.data
         password = form.password.data
         
-        if username in users and users[username]['password'] == password:
-            session['user'] = username
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
+            session['user'] = user.username
             flash('Successfully logged in!', 'success')
             return redirect(url_for('main.home'))
         else:
@@ -89,18 +70,7 @@ def logout():
 @main.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('dashboard.html',
-        image1='images/node_category_distribution.png',
-        image2='images/packets_vs_traffic.png',
-        image3='images/connection_frequency_distribution.png',
-        image4='images/traffic_volume_over_time.png',
-        image5='images/heatmap.png',
-        image6='images/bar_chart.png',
-        image7='images/pairplot.png',
-        image8='images/anomaly_bar_chart.png',
-        image9='images/anomaly_pie_chart.png',
-        image10='images/anomaly_scatter.png'
-    )
+    return render_template('dashboard.html')
 
 @main.route('/home')
 @login_required
@@ -110,6 +80,7 @@ def home():
 @main.route('/input_data', methods=['GET', 'POST'])
 @login_required
 def input_data():
+    from forms import TrafficAnalysisForm, NodeCategorizeForm, AnomalyDetectionForm
     form = FileUploadForm()
     preview_data = []
     
@@ -118,12 +89,11 @@ def input_data():
         
         try:
             if form_type == 'traffic':
-                # Process traffic analysis form with the new rules
                 # Input Features: packet_size, connection_duration, src_bytes, protocol_type
-                packet_size = float(request.form.get('packet_size', 0))
-                connection_duration = float(request.form.get('connection_duration', 0))
-                src_bytes = float(request.form.get('src_bytes', 0))
-                protocol_type = request.form.get('protocol', 'Unknown')
+                packet_size = float(request.form.get('packet_size') or 0)
+                connection_duration = float(request.form.get('connection_duration') or 0)
+                src_bytes = float(request.form.get('src_bytes') or 0)
+                protocol_type = request.form.get('protocol') or 'Unknown'
                 
                 # Call the model manager to get predictions
                 features = [packet_size, connection_duration, src_bytes, protocol_type]
@@ -138,14 +108,12 @@ def input_data():
                 })
                 
             elif form_type == 'node':
-                # Process node categorization form with the new rules
                 # Input Features: ip_address_range, protocol_type, packets_sent, device_type, traffic_volume, connection_frequency
-                ip_range = request.form.get('ip_range', '')
-                protocol_type = request.form.get('protocol', '')
-                packets_sent = float(request.form.get('packets_sent', 0))
-                device_type = request.form.get('device_type', '')
-                traffic_volume = float(request.form.get('traffic_volume', 0))
-                connection_frequency = float(request.form.get('connection_frequency', 0))
+                protocol_type = request.form.get('protocol') or ''
+                packets_sent = float(request.form.get('packets_sent') or 0)
+                device_type = request.form.get('device_type') or ''
+                traffic_volume = float(request.form.get('traffic_volume') or 0)
+                connection_frequency = float(request.form.get('connection_frequency') or 0)
                 
                 # Call the model manager to get predictions
                 features = [
@@ -166,15 +134,14 @@ def input_data():
                 })
                 
             elif form_type == 'anomaly':
-                # Process anomaly detection form with the new rules
                 # Input Features: packets_sent, traffic_volume, connection_duration, connection_frequency, protocol_type, src_bytes, packet_size
-                packets_sent = float(request.form.get('packets_sent', 0))
-                traffic_volume = float(request.form.get('traffic_volume', 0))
-                connection_duration = float(request.form.get('connection_duration', 0))
-                connection_frequency = float(request.form.get('connection_frequency', 0))
-                protocol_type = request.form.get('protocol', '')
-                src_bytes = float(request.form.get('src_bytes', 0))
-                packet_size = float(request.form.get('packet_size', 0))
+                packets_sent = float(request.form.get('packets_sent') or 0)
+                traffic_volume = float(request.form.get('traffic_volume') or 0)
+                connection_duration = float(request.form.get('connection_duration') or 0)
+                connection_frequency = float(request.form.get('connection_frequency') or 0)
+                protocol_type = request.form.get('protocol') or ''
+                src_bytes = float(request.form.get('src_bytes') or 0)
+                packet_size = float(request.form.get('packet_size') or 0)
                 
                 # Calculate packet rate (could be used as additional feature)
                 packet_rate = packets_sent / connection_duration if connection_duration > 0 else 0
@@ -191,29 +158,18 @@ def input_data():
                     'severity_level': 'High' if result['anomaly_score'] < -0.8 else 'Medium' if result['anomaly_score'] < -0.5 else 'Low'
                 })
                 
+                
         except Exception as e:
             logger.error(f"Error in input_data route: {str(e)}")
             return jsonify({'error': str(e)}), 400
     
     return render_template('input_data.html', form=form, preview_data=preview_data)
 
-@main.route('/predict', methods=['POST'])
-@login_required
-def predict():
-    try:
-        data = request.get_json()
-        prediction = model_manager.predict(data)
-        return jsonify(prediction)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 400
-
 @main.route('/about')
-@login_required
 def about():
     return render_template('about.html')
 
 @main.route('/contact')
-@login_required
 def contact():
     return render_template('contact.html')
 
@@ -235,49 +191,99 @@ def model_report():
         flash('Error generating model report: ' + str(e), 'danger')
         return render_template('model_report.html', metrics={
             'traffic_model': {
-                'accuracy': '95.00%',
-                'precision': '94.00%',
-                'recall': '93.00%',
-                'f1_score': '93.50%'
+                'accuracy': 0.95,
+                'precision': 0.94,
+                'recall': 0.93,
+                'f1_score': 0.935
             },
             'node_model': {
-                'accuracy': '92.00%',
-                'precision': '91.00%',
-                'recall': '90.00%',
-                'f1_score': '90.50%'
+                'accuracy': 0.92,
+                'precision': 0.91,
+                'recall': 0.90,
+                'f1_score': 0.905
             },
             'anomaly_model': {
-                'auc_roc': '97.00%',
-                'precision': '96.00%',
-                'recall': '95.00%',
-                'f1_score': '95.50%'
+                'auc_roc': 0.97,
+                'precision': 0.96,
+                'recall': 0.95,
+                'f1_score': 0.955
             }
         })
 
-@main.route('/retrain_models', methods=['POST'])
+@main.route('/api/export_csv')
 @login_required
-def retrain_models():
+def export_csv():
+    """Export all traffic logs as CSV."""
+    from io import StringIO
+    import csv
+    from models.database import TrafficLog
+    
+    logs = TrafficLog.query.order_by(TrafficLog.timestamp.desc()).all()
+    
+    si = StringIO()
+    writer = csv.writer(si)
+    writer.writerow(['Timestamp', 'Protocol', 'Packet Size', 'Src Bytes', 'Classification', 'Confidence'])
+    for log in logs:
+        writer.writerow([
+            log.timestamp.isoformat() if log.timestamp else '',
+            log.protocol_type,
+            round(log.packet_size, 2) if log.packet_size else 0,
+            round(log.src_bytes, 2) if log.src_bytes else 0,
+            log.classification,
+            round(log.confidence, 2) if log.confidence else 0
+        ])
+    
+    from flask import Response
+    output = Response(si.getvalue(), mimetype='text/csv')
+    output.headers['Content-Disposition'] = 'attachment; filename=traffic_log.csv'
+    return output
+
+@main.route('/api/simulate_packet')
+@login_required
+def simulate_packet():
+    """Generate a single simulated packet, classify it, save to DB, return JSON.
+    This is called by the dashboard via setInterval polling - no WebSockets needed."""
+    import random
+    from models.database import db, TrafficLog
+    
     try:
-        selected_models = request.form.getlist('models[]')
-        if not selected_models:
-            flash('Please select at least one model to retrain.', 'warning')
-            return redirect(url_for('main.model_report'))
-
-        # Retrain selected models
-        results = {}
-        for model_name in selected_models:
-            if model_name == 'traffic':
-                model_manager.retrain_traffic_model()
-                results['traffic'] = 'Success'
-            elif model_name == 'node':
-                model_manager.retrain_node_model()
-                results['node'] = 'Success'
-            elif model_name == 'anomaly':
-                model_manager.retrain_anomaly_model()
-                results['anomaly'] = 'Success'
-
-        flash('Models retrained successfully: ' + ', '.join(selected_models), 'success')
-        return redirect(url_for('main.model_report'))
+        packet_size = random.uniform(40.0, 2000.0)
+        protocol_type = random.choice(['TCP', 'UDP', 'ICMP', 'MQTT', 'HTTP', 'TLS'])
+        src_bytes = packet_size * random.uniform(0.5, 0.9)
+        
+        # 5% chance of anomaly
+        if random.random() < 0.05:
+            packet_size *= random.uniform(5, 10)
+            src_bytes *= random.uniform(5, 10)
+        
+        features = [packet_size, 0.0, src_bytes, protocol_type]
+        
+        result = current_app.model_manager.predict({
+            'model_type': 'traffic',
+            'features': features
+        })
+        
+        log = TrafficLog(
+            packet_size=packet_size,
+            connection_duration=0.0,
+            src_bytes=src_bytes,
+            protocol_type=protocol_type,
+            classification=result['prediction'],
+            confidence=result['confidence']
+        )
+        db.session.add(log)
+        db.session.commit()
+        
+        return jsonify({
+            'Protocol': protocol_type,
+            'Packet Size': round(packet_size, 2),
+            'Traffic Status': result['prediction'],
+            'Confidence': round(result['confidence'], 2)
+        })
     except Exception as e:
-        flash('Error retraining models: ' + str(e), 'danger')
-        return redirect(url_for('main.model_report')) 
+        logger.error(f"Error in simulate_packet: {e}")
+        try:
+            db.session.rollback()
+        except:
+            pass
+        return jsonify({'error': str(e)}), 500

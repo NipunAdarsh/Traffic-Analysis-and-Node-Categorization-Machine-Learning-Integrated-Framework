@@ -75,19 +75,36 @@ class ModelManager:
         Traffic Analysis Logic:
         Input Features: packet_size, connection_duration, src_bytes, protocol_type
         Output: "Malicious" or "Normal"
-        
-        Condition:
-        "Malicious" if protocol_type == "Unknown" or packet_size > 1400 or connection_duration > 50
-        Otherwise, "Normal"
         """
         try:
-            # Features order: packet_size, connection_duration, src_bytes, protocol_type
+            # Try to use actual ML model first
+            if self.traffic_model and hasattr(self.traffic_model, 'predict'):
+                # Assuming simple numeric cast works
+                try:
+                    num_features = []
+                    for f in features:
+                        if isinstance(f, str):
+                            # Very basic encoding for protocol (TCP=1, UDP=2, etc.)
+                            if f == 'TCP': num_features.append(1)
+                            elif f == 'UDP': num_features.append(2)
+                            elif f == 'HTTP': num_features.append(3)
+                            else: num_features.append(0)
+                        else:
+                            num_features.append(float(f))
+                    # Ensure it matches model feature count
+                    if len(num_features) == self.traffic_features_count:
+                        pred_val = self.traffic_model.predict([num_features])[0]
+                        prediction = "Malicious" if pred_val == 1 else "Normal"
+                        confidence = 0.85
+                        return { 'prediction': prediction, 'confidence': confidence, 'features': features }
+                except Exception as model_err:
+                    logger.warning(f"ML model predict failed, falling back to rules: {model_err}")
+
+            # Fallback Rules
             packet_size = features[0]
             connection_duration = features[1]
-            src_bytes = features[2]
-            protocol_type = features[3]  # This could be a numeric mapping or the string
+            protocol_type = features[3] 
             
-            # Apply rules
             if protocol_type == "Unknown" or protocol_type == 0 or packet_size > 1400 or connection_duration > 50:
                 prediction = "Malicious"
                 confidence = 0.9
@@ -113,32 +130,46 @@ class ModelManager:
         """
         Node Categorization Logic:
         Input Features: device_type, traffic_volume, connection_frequency
-        
         Output: "Server", "Router", "Switch", "Malicious", etc.
-        
-        Logic:
-        "Server" if traffic_volume > 80000 and connection_frequency > 80
-        "Router" if packets_sent > 4000
-        "IoT Device" if protocol_type == "MQTT"
-        "Switch" if connection_frequency > 90 and traffic_volume < 5000
-        Otherwise, "Malicious"
         """
         try:
-            # Features order based on routes/main.py: device_type, traffic_volume, connection_frequency
-            device_type = features[0]  # This is likely a numeric mapping 
+            # Try to use actual ML model first
+            if self.node_model and hasattr(self.node_model, 'predict'):
+                try:
+                    num_features = []
+                    for f in features:
+                        if isinstance(f, str):
+                            num_features.append(hash(f) % 10)
+                        else:
+                            num_features.append(float(f))
+                    # Pad or truncate to match feature count
+                    if len(num_features) < self.node_features_count:
+                        num_features.extend([0] * (self.node_features_count - len(num_features)))
+                    if len(num_features) > self.node_features_count:
+                        num_features = num_features[:self.node_features_count]
+
+                    pred_val = self.node_model.predict([num_features])[0]
+                    # Map back generic classes if needed, else just use str
+                    prediction = str(pred_val).capitalize()
+                    if prediction == "0": prediction = "Server"
+                    elif prediction == "1": prediction = "Router"
+                    return { 'prediction': prediction, 'confidence': 0.85, 'features': features }
+                except Exception as model_err:
+                    logger.warning(f"ML node model predict failed, falling back to rules: {model_err}")
+
+            # Fallback Rules
             traffic_volume = features[1]
             connection_frequency = features[2]
             packets_sent = features[3] if len(features) > 3 else 0
             protocol_type = features[4] if len(features) > 4 else ""
 
-            # Apply categorization rules
             if traffic_volume > 80000 and connection_frequency > 80:
                 prediction = "Server"
                 confidence = 0.92
             elif packets_sent > 4000:
                 prediction = "Router"
                 confidence = 0.88
-            elif protocol_type == "MQTT":
+            elif str(protocol_type).upper() == "MQTT":
                 prediction = "IoT Device"
                 confidence = 0.94
             elif connection_frequency > 90 and traffic_volume < 5000:
@@ -165,26 +196,42 @@ class ModelManager:
     def _predict_anomaly(self, features):
         """
         Anomaly Detection Logic:
-        Input Features: packets_sent, traffic_volume, connection_duration, 
-                      connection_frequency, protocol_type, src_bytes, packet_size
-        
+        Input Features: packets_sent, traffic_volume, connection_duration, etc.
         Output: "Anomaly Detected" or "No Anomaly"
-        
-        Condition:
-        "Anomaly Detected" if packets_sent > 10000 or traffic_volume > 500000 or connection_frequency > 200
-        Otherwise, "No Anomaly"
         """
         try:
-            # We expect at least 3 features based on routes/main.py: traffic_volume, packet_rate, connection_frequency, error_rate
+            # Try to use actual ML model first
+            if self.anomaly_model and hasattr(self.anomaly_model, 'predict'):
+                try:
+                    num_features = []
+                    for f in features:
+                        if isinstance(f, str):
+                            num_features.append(hash(f) % 10)
+                        else:
+                            num_features.append(float(f))
+                    # Pad or truncate to match feature count
+                    if len(num_features) < self.anomaly_features_count:
+                        num_features.extend([0] * (self.anomaly_features_count - len(num_features)))
+                    if len(num_features) > self.anomaly_features_count:
+                        num_features = num_features[:self.anomaly_features_count]
+
+                    pred_val = self.anomaly_model.predict([num_features])[0]
+                    # IF IsolationForest, -1 is anomaly, 1 is normal
+                    if pred_val == -1:
+                        prediction = "Anomaly Detected"
+                        anomaly_score = -0.9
+                    else:
+                        prediction = "No Anomaly"
+                        anomaly_score = 0.7
+                    return { 'prediction': prediction, 'anomaly_score': anomaly_score, 'features': features }
+                except Exception as model_err:
+                    logger.warning(f"ML anomaly model predict failed, falling back to rules: {model_err}")
+
+            # Fallback Rules
             traffic_volume = features[0]
-            packet_rate = features[1]
             connection_frequency = features[2]
             packets_sent = features[3] if len(features) > 3 else 0
             
-            # Calculate anomaly score (-1 to 1, where < 0 indicates anomaly)
-            anomaly_score = 0
-            
-            # Apply anomaly detection rules
             if packets_sent > 10000 or traffic_volume > 500000 or connection_frequency > 200:
                 prediction = "Anomaly Detected"
                 anomaly_score = -0.9
@@ -260,18 +307,4 @@ class ModelManager:
         except Exception as e:
             logger.error(f"Error generating model metrics: {str(e)}")
             raise
-
-    def retrain_traffic_model(self):
-        # Dummy implementation for retraining
-        logger.info("Traffic model retrained")
-        return True
-
-    def retrain_node_model(self):
-        # Dummy implementation for retraining
-        logger.info("Node model retrained")
-        return True
-
-    def retrain_anomaly_model(self):
-        # Dummy implementation for retraining
-        logger.info("Anomaly model retrained")
-        return True 
+

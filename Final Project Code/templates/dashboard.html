@@ -6,22 +6,56 @@
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
     <!-- Welcome Section -->
     <div class="bg-white rounded-lg shadow-sm p-8 mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">Welcome to Traffic Analysis Dashboard</h1>
-        <p class="text-gray-600">Monitor and analyze network traffic patterns in real-time</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Live Traffic Dashboard</h1>
+        <p class="text-gray-600">Monitor and analyze network traffic patterns in real time — powered by ML classification</p>
+        <div class="mt-3 flex items-center gap-3">
+            <span id="status-dot" class="inline-block w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
+            <span id="status-text" class="text-sm text-green-700 font-medium">Simulation Active</span>
+        </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="bg-white rounded-lg shadow-sm p-4 mb-8 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <button id="toggle-btn" onclick="toggleSimulation()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200">
+                <svg id="toggle-icon" class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span id="toggle-text">Pause</span>
+            </button>
+            <button onclick="resetCounters()" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                Reset
+            </button>
+        </div>
+        <div class="flex items-center gap-4">
+            <label class="inline-flex items-center text-sm text-gray-600">
+                <input type="checkbox" id="filter-malicious" class="rounded border-gray-300 text-indigo-600 mr-2" onchange="toggleFilter()">
+                Show malicious only
+            </label>
+            <button onclick="downloadCSV()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 transition-colors duration-200">
+                <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Export CSV
+            </button>
+        </div>
     </div>
 
     <!-- Stats Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow-sm p-6">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-green-100 text-green-500">
+                <div class="p-3 rounded-full bg-blue-100 text-blue-500">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <h2 class="text-sm font-medium text-gray-600">Total Traffic</h2>
-                    <p class="text-lg font-semibold text-gray-900">1.2 TB</p>
+                    <h2 class="text-sm font-medium text-gray-600">Packets Captured</h2>
+                    <p id="stat-packets" class="text-2xl font-bold text-gray-900"><span class="inline-block bg-gray-200 rounded animate-pulse h-7 w-16"></span></p>
                 </div>
             </div>
         </div>
@@ -33,109 +67,336 @@
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <h2 class="text-sm font-medium text-gray-600">Anomalies Detected</h2>
-                    <p class="text-lg font-semibold text-gray-900">12</p>
+                    <h2 class="text-sm font-medium text-gray-600">Malicious Detected</h2>
+                    <p id="stat-malicious" class="text-2xl font-bold text-red-600"><span class="inline-block bg-gray-200 rounded animate-pulse h-7 w-16"></span></p>
                 </div>
             </div>
         </div>
         <div class="bg-white rounded-lg shadow-sm p-6">
             <div class="flex items-center">
-                <div class="p-3 rounded-full bg-red-100 text-red-500">
+                <div class="p-3 rounded-full bg-green-100 text-green-500">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
                 <div class="ml-4">
-                    <h2 class="text-sm font-medium text-gray-600">Active Sessions</h2>
-                    <p class="text-lg font-semibold text-gray-900">156</p>
+                    <h2 class="text-sm font-medium text-gray-600">Normal Traffic</h2>
+                    <p id="stat-normal" class="text-2xl font-bold text-green-600"><span class="inline-block bg-gray-200 rounded animate-pulse h-7 w-16"></span></p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Traffic Analysis Section -->
+    <!-- Threat Alert Banner (hidden by default) -->
+    <div id="threat-alert" class="hidden bg-red-600 text-white rounded-lg shadow-lg p-4 mb-8 flex items-center animate-pulse">
+        <svg class="h-8 w-8 mr-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <div>
+            <h3 class="font-bold text-lg">⚠️ Threat Level Elevated</h3>
+            <p id="threat-message" class="text-sm opacity-90">High ratio of malicious packets detected in recent traffic.</p>
+        </div>
+    </div>
+
+    <!-- Malicious % Gauge -->
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+        <div class="flex items-center justify-between mb-2">
+            <h2 class="text-sm font-medium text-gray-600">Malicious Traffic Ratio</h2>
+            <span id="malicious-pct" class="text-lg font-bold text-gray-900">0%</span>
+        </div>
+        <div class="w-full bg-gray-200 rounded-full h-3">
+            <div id="malicious-bar" class="h-3 rounded-full bg-green-500 transition-all duration-500" style="width: 0%"></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">Based on all captured packets this session</p>
+    </div>
+
+    <!-- Charts Section -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div class="bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Traffic Distribution</h2>
-            <div class="h-[300px]">
-                <img src="{{ url_for('static', filename='images/protocol_usage_distribution.png') }}" 
-                     alt="Traffic Distribution" 
-                     class="w-full h-full object-contain">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Traffic Volume Over Time (Bytes)</h2>
+            <div style="height:300px; position:relative;">
+                <canvas id="trafficVolumeChart"></canvas>
             </div>
         </div>
         <div class="bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Anomaly Detection</h2>
-            <div class="h-[300px]">
-                <img src="{{ url_for('static', filename='images/connection_duration_distribution.png') }}" 
-                     alt="Anomaly Detection" 
-                     class="w-full h-full object-contain">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Protocol Usage</h2>
+            <div style="height:300px; position:relative; display:flex; justify-content:center;">
+                <canvas id="protocolUsageChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Additional Analysis Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div class="bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Traffic Volume Over Time</h2>
-            <div class="h-[300px]">
-                <img src="{{ url_for('static', filename='images/traffic_volume_over_time.png') }}" 
-                     alt="Traffic Volume Over Time" 
-                     class="w-full h-full object-contain">
-            </div>
-        </div>
-        <div class="bg-white rounded-lg shadow-sm p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Node Category Distribution</h2>
-            <div class="h-[300px]">
-                <img src="{{ url_for('static', filename='images/anomaly_scatter.png') }}" 
-                     alt="Node Category Distribution" 
-                     class="w-full h-full object-contain">
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Activity -->
+    <!-- Recent Activity Table -->
     <div class="bg-white rounded-lg shadow-sm p-6">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Live Packet Activity</h2>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead>
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Event</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Protocol</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size (Bytes)</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Classification</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Confidence</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2 minutes ago</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Traffic Analysis Completed</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                Normal
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">5 minutes ago</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Anomaly Detection Alert</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                Warning
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">10 minutes ago</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Malicious Traffic Detected</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                Critical
-                            </span>
-                        </td>
-                    </tr>
+                <tbody id="activityTableBody" class="bg-white divide-y divide-gray-200">
+                    <!-- Dynamic rows inserted by JS -->
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+<!-- Chart.js CDN only (NO Socket.IO needed!) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let totalPackets = 0;
+let totalNormal = 0;
+let totalMalicious = 0;
+let protocolCounts = {};
+
+let isPaused = false;
+let allPackets = [];
+let filterMaliciousOnly = false;
+let volumeChart, protocolChart;
+let statPackets, statNormal, statMalicious, tableBody;
+
+document.addEventListener("DOMContentLoaded", function() {
+    const ctxVolume = document.getElementById('trafficVolumeChart').getContext('2d');
+    const ctxProtocol = document.getElementById('protocolUsageChart').getContext('2d');
+
+    volumeChart = new Chart(ctxVolume, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Packet Size (Bytes)',
+                data: [],
+                borderColor: 'rgb(59, 130, 246)',
+                tension: 0.3,
+                fill: true,
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                pointRadius: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { display: false },
+                y: { beginAtZero: true }
+            },
+            animation: { duration: 300 }
+        }
+    });
+
+    protocolChart = new Chart(ctxProtocol, {
+        type: 'doughnut',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right' }
+            }
+        }
+    });
+
+    statPackets = document.getElementById('stat-packets');
+    statNormal = document.getElementById('stat-normal');
+    statMalicious = document.getElementById('stat-malicious');
+    tableBody = document.getElementById('activityTableBody');
+
+    console.log('Dashboard polling started - fetching /api/simulate_packet every 1s');
+    setInterval(fetchPacket, 1000);
+    fetchPacket();
+});
+
+function toggleSimulation() {
+    isPaused = !isPaused;
+    const btn = document.getElementById('toggle-btn');
+    const text = document.getElementById('toggle-text');
+    const icon = document.getElementById('toggle-icon');
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+
+    if (isPaused) {
+        text.innerText = 'Resume';
+        btn.classList.replace('bg-indigo-600', 'bg-gray-600');
+        btn.classList.replace('hover:bg-indigo-700', 'hover:bg-gray-700');
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+        statusDot.classList.replace('bg-green-500', 'bg-gray-500');
+        statusDot.classList.remove('animate-pulse');
+        statusText.innerText = 'Simulation Paused';
+        statusText.classList.replace('text-green-700', 'text-gray-700');
+    } else {
+        text.innerText = 'Pause';
+        btn.classList.replace('bg-gray-600', 'bg-indigo-600');
+        btn.classList.replace('hover:bg-gray-700', 'hover:bg-indigo-700');
+        icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />';
+        statusDot.classList.replace('bg-gray-500', 'bg-green-500');
+        statusDot.classList.add('animate-pulse');
+        statusText.innerText = 'Simulation Active';
+        statusText.classList.replace('text-gray-700', 'text-green-700');
+    }
+}
+
+function toggleFilter() {
+    filterMaliciousOnly = document.getElementById('filter-malicious').checked;
+    renderTable();
+}
+
+function downloadCSV() {
+    if (allPackets.length === 0) return;
+    let csv = 'Time,Protocol,Packet Size (Bytes),Classification,Confidence\n';
+    allPackets.forEach(p => {
+        csv += `${p.timeStr},${p.proto},${p.size},${p.status},${p.confidence.toFixed(0)}%\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'live_traffic_session.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+
+function resetCounters() {
+    totalPackets = 0;
+    totalNormal = 0;
+    totalMalicious = 0;
+    protocolCounts = {};
+    allPackets = [];
+    
+    statPackets.innerText = '0';
+    statNormal.innerText = '0';
+    statMalicious.innerText = '0';
+    tableBody.innerHTML = '';
+    
+    volumeChart.data.labels = [];
+    volumeChart.data.datasets[0].data = [];
+    volumeChart.update();
+    
+    protocolChart.data.labels = [];
+    protocolChart.data.datasets[0].data = [];
+    protocolChart.update();
+
+    document.getElementById('malicious-pct').innerText = '0%';
+    document.getElementById('malicious-bar').style.width = '0%';
+    document.getElementById('malicious-bar').className = 'h-3 rounded-full bg-green-500 transition-all duration-500';
+    document.getElementById('threat-alert').classList.add('hidden');
+}
+
+function renderTable() {
+    tableBody.innerHTML = '';
+    const toShow = allPackets.filter(p => !filterMaliciousOnly || p.status === 'Malicious').slice(0, 15);
+    toShow.forEach(p => {
+        const newRow = document.createElement('tr');
+        const statusColor = p.status === 'Malicious' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
+        newRow.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${p.timeStr}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${p.proto}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${p.size}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColor}">
+                    ${p.status}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${p.confidence.toFixed(0)}%</td>
+        `;
+        tableBody.appendChild(newRow);
+    });
+}
+
+function fetchPacket() {
+    if (isPaused) return;
+
+    fetch('/api/simulate_packet')
+        .then(response => {
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            return response.json();
+        })
+        .then(msg => {
+            if (msg.error) {
+                console.error('Server error:', msg.error);
+                return;
+            }
+
+            totalPackets++;
+            if (msg['Traffic Status'] === 'Malicious') totalMalicious++;
+            else totalNormal++;
+
+            statPackets.innerText = totalPackets;
+            statMalicious.innerText = totalMalicious;
+            statNormal.innerText = totalNormal;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString();
+
+            volumeChart.data.labels.push(timeStr);
+            volumeChart.data.datasets[0].data.push(msg['Packet Size']);
+            if (volumeChart.data.labels.length > 50) {
+                volumeChart.data.labels.shift();
+                volumeChart.data.datasets[0].data.shift();
+            }
+            volumeChart.update();
+
+            const proto = msg['Protocol'];
+            if (!protocolCounts[proto]) {
+                protocolCounts[proto] = 0;
+                protocolChart.data.labels.push(proto);
+                protocolChart.data.datasets[0].data.push(0);
+            }
+            protocolCounts[proto]++;
+            const protoIdx = protocolChart.data.labels.indexOf(proto);
+            protocolChart.data.datasets[0].data[protoIdx] = protocolCounts[proto];
+            protocolChart.update();
+
+            // Save to allPackets (prepend)
+            allPackets.unshift({
+                timeStr: timeStr,
+                proto: proto,
+                size: msg['Packet Size'],
+                status: msg['Traffic Status'],
+                confidence: msg['Confidence'] * 100
+            });
+            if (allPackets.length > 500) allPackets.pop(); // keep last 500 max in memory
+            
+            renderTable();
+
+            // Gauge and Threat updates
+            const ratio = totalMalicious / Math.max(totalPackets, 1);
+            const pct = (ratio * 100).toFixed(1);
+            document.getElementById('malicious-pct').innerText = pct + '%';
+            
+            const bar = document.getElementById('malicious-bar');
+            bar.style.width = pct + '%';
+            if (ratio > 0.25) bar.className = 'h-3 rounded-full bg-red-500 transition-all duration-500';
+            else if (ratio > 0.1) bar.className = 'h-3 rounded-full bg-yellow-500 transition-all duration-500';
+            else bar.className = 'h-3 rounded-full bg-green-500 transition-all duration-500';
+
+            // Threat alert logic (if >10 malicious in last 50 packets)
+            const recent = allPackets.slice(0, 50);
+            const recentMal = recent.filter(p => p.status === 'Malicious').length;
+            const alert = document.getElementById('threat-alert');
+            if (recentMal > 10 && recent.length > 20) {
+                alert.classList.remove('hidden');
+                document.getElementById('threat-message').innerText = `${recentMal} malicious packets detected in the last ${recent.length} connections.`;
+            } else {
+                alert.classList.add('hidden');
+            }
+        })
+        .catch(err => {
+            console.error('Fetch error:', err);
+        });
+}
+</script>
 {% endblock %}
