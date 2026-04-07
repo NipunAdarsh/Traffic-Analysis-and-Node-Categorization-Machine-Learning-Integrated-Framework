@@ -1,95 +1,68 @@
-# Traffic Analysis System
+# Traffic Analysis and Node Categorization
+### Machine Learning Integrated Framework
 
-A Flask-based web application for analyzing network traffic, detecting anomalies, and categorizing network nodes using machine learning models.
+A robust, real-time network monitoring and cybersecurity framework built with **Flask** and **Scikit-Learn**. This system integrates multiple machine learning paradigms to classify traffic, categorize network nodes, and detect anomalies in high-velocity data streams.
 
-## Features
+---
 
-- Traffic Analysis: Classify network traffic as normal or malicious
-- Node Categorization: Identify different types of network nodes
-- Anomaly Detection: Detect unusual patterns in network traffic
-- Real-time Visualization: Display traffic patterns and analysis results
-- Model Performance Monitoring: Track and display model metrics
+## 🚀 Key Features
 
-## Project Structure
+*   **Real-time Traffic Dashboard**: Interactive monitoring with dynamic visualizations (Chart.js), malicious traffic gauges, and instant threat banners.
+*   **Three-Tier ML Architecture**:
+    *   **Traffic Classification**: Binary classification (Normal vs. Malicious).
+    *   **Node Categorization**: Multi-class identification of device roles (Router, Server, IoT, etc.).
+    *   **Anomaly Detection**: Statistical outlier identification for threat detection.
+*   **Interactive Simulation Engine**: High-fidelity traffic simulation with start/stop controls and real-time API polling.
+*   **Hybrid Inference Engine**: Robust logic that attempts model-based inference (`.joblib`) with a fallback to validated rule-based logic.
+*   **Data Export & Reporting**: Server-side CSV generation for traffic logs and performance reporting.
 
-```
-traffic-analysis/
-├── app.py              # Main application entry point
-├── config.py           # Configuration settings
-├── requirements.txt    # Project dependencies
-├── models/            # ML models and model management
-│   └── model_manager.py
-├── routes/            # Route handlers
-│   └── main.py
-├── static/            # Static files (CSS, JS, images)
-├── templates/         # HTML templates
-└── logs/             # Application logs
-```
+---
 
-## Installation
+## 🛠️ Technology Stack
 
-1. Clone the repository:
+| Component | Technology |
+| :--- | :--- |
+| **Backend** | Python, Flask, SQLAlchemy |
+| **Machine Learning** | Scikit-Learn, Joblib |
+| **Frontend** | Tailwind CSS, Chart.js, GSAP |
+
+---
+
+## 📦 Installation & Setup
+
+### 1. Clone & Setup
 ```bash
-git clone https://github.com/yourusername/traffic-analysis.git
-cd traffic-analysis
-```
-
-2. Create a virtual environment:
-```bash
+git clone https://github.com/NipunAdarsh/Traffic-Analysis-and-Node-Categorization-Machine-Learning-Integrated-Framework.git
+cd "Final Project Code"
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
+source venv/Scripts/activate  # Windows
 pip install -r requirements.txt
 ```
 
-## Configuration
-
-The application uses different configuration classes for development, testing, and production environments. Set the `FLASK_CONFIG` environment variable to one of:
-- `development`
-- `testing`
-- `production`
-
-## Running the Application
-
-1. Development mode:
+### 2. Run the Application
 ```bash
 python app.py
 ```
 
-2. Production mode:
-```bash
-gunicorn app:create_app('production')
+---
+
+## 🔑 Usage & Access
+
+Login with the following administrator credentials:
+*   **Username**: `admin`
+*   **Password**: `admin123`
+
+---
+
+## 📂 Project Structure
+
+```text
+├── app.py              # Application Entry Point
+├── models/             
+│   ├── model_manager.py# ML Inference Engine
+│   └── database.py     # Database Schema
+├── routes/             
+│   └── main.py         # App Logic & API Endpoints
+├── templates/          # Modern UI Layouts
+└── data_models/        # Pre-trained ML Models
 ```
-
-## API Endpoints
-
-- `GET /`: Dashboard with visualizations
-- `GET /input_data`: Form for inputting traffic data
-- `POST /predict`: Endpoint for making predictions
-- `GET /model_report`: Display model performance metrics
-
-## Security Features
-
-- CSRF Protection
-- Rate Limiting
-- Input Validation
-- Secure Cookie Settings
-- Error Logging
-
-## Testing
-
-Run tests using pytest:
-```bash
-pytest
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
