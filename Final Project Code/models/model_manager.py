@@ -10,6 +10,8 @@ from sklearn.ensemble import RandomForestClassifier, IsolationForest
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+from utils.cache import prediction_cache
+import threading
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +20,19 @@ class ModelManager:
         self.traffic_model = None
         self.node_model = None
         self.anomaly_model = None
+        self._load_lock = threading.Lock()
         logger.info("Model Manager initialized")
+
+    def load_models_async(self, app):
+        """Start loading models in a background thread."""
+        thread = threading.Thread(target=self._load_models_with_context, args=(app,))
+        thread.daemon = True
+        thread.start()
+
+    def _load_models_with_context(self, app):
+        with app.app_context():
+            with self._load_lock:
+                self._load_models()
 
     def _load_models(self):
         """Load all ML models from disk."""
@@ -56,19 +70,26 @@ class ModelManager:
 
     def predict(self, data):
         """
-        Make predictions based on the model type and input features
+        Make predictions based on the model type and input features. Uses LRU cache.
         """
+        cached = prediction_cache.get(data)
+        if cached:
+            return cached
+
         model_type = data.get('model_type', '')
         features = data.get('features', [])
         
         if model_type == 'traffic':
-            return self._predict_traffic(features)
+            res = self._predict_traffic(features)
         elif model_type == 'node':
-            return self._predict_node(features)
+            res = self._predict_node(features)
         elif model_type == 'anomaly':
-            return self._predict_anomaly(features)
+            res = self._predict_anomaly(features)
         else:
             raise ValueError(f"Unknown model type: {model_type}")
+
+        prediction_cache.set(data, res)
+        return res
 
     def _predict_traffic(self, features):
         """

@@ -4,26 +4,32 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-    <div class="bg-white rounded-lg shadow-sm p-8">
+    <div class="glass rounded-2xl shadow-xl p-8 mb-8 hover-lift border-t-4 border-indigo-500">
         <!-- Tabs -->
-        <div class="border-b border-gray-200 mb-8">
-            <nav class="-mb-px flex space-x-8">
-                <button class="border-blue-500 text-blue-500 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center" id="traffic-tab">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
+        <div class="border-b border-gray-100 mb-8 overflow-x-auto">
+            <nav class="-mb-px flex space-x-12 min-w-max">
+                <button class="border-indigo-600 text-indigo-600 whitespace-nowrap py-5 px-4 border-b-2 font-black text-xs uppercase tracking-widest flex items-center transition-all duration-300 active-tab-scale" id="traffic-tab">
+                    <div class="bg-indigo-100 p-2 rounded-lg mr-3 shadow-inner">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                    </div>
                     Traffic Analysis
                 </button>
-                <button class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm flex items-center" id="node-tab">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
+                <button class="text-gray-400 hover:text-indigo-500 whitespace-nowrap py-5 px-4 border-b-2 border-transparent font-black text-xs uppercase tracking-widest flex items-center transition-all duration-300 group" id="node-tab">
+                    <div class="bg-gray-100 group-hover:bg-indigo-50 p-2 rounded-lg mr-3 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                    </div>
                     Node Categorization
                 </button>
-                <button class="text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 border-transparent font-medium text-sm flex items-center" id="anomaly-tab">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
+                <button class="text-gray-400 hover:text-indigo-500 whitespace-nowrap py-5 px-4 border-b-2 border-transparent font-black text-xs uppercase tracking-widest flex items-center transition-all duration-300 group" id="anomaly-tab">
+                    <div class="bg-gray-100 group-hover:bg-indigo-50 p-2 rounded-lg mr-3 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
                     Anomaly Detection
                 </button>
             </nav>
@@ -31,38 +37,42 @@
 
         <!-- Traffic Analysis Form -->
         <div id="traffic-form" class="tab-content">
-            <div class="bg-blue-500 px-6 py-4 rounded-t-lg">
-                <h2 class="text-xl font-bold text-white">Traffic Analysis Form</h2>
+            <div class="bg-gradient-to-r from-indigo-600 to-blue-500 px-8 py-6 rounded-t-2xl shadow-lg">
+                <h2 class="text-2xl font-black text-white uppercase tracking-wider">Transmission Parameters</h2>
+                <p class="text-indigo-100 text-xs font-semibold mt-1">Configure telemetry data for packet flow analysis</p>
             </div>
-            <div class="bg-white p-6 rounded-b-lg border-x border-b">
-                <form data-form-type="traffic" class="space-y-6" method="POST">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white/40 backdrop-blur-md p-8 rounded-b-2xl border-x border-b border-gray-100 shadow-inner">
+                <form data-form-type="traffic" class="space-y-8" method="POST">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Packet Size (bytes)</label>
-                            <input type="number" name="packet_size" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Packet Size (bytes)</label>
+                            <input type="number" name="packet_size" placeholder="64-1500" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Connection Duration (seconds)</label>
-                            <input type="number" name="connection_duration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Session TTL (seconds)</label>
+                            <input type="number" name="connection_duration" placeholder="0.1-3600" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Source Bytes</label>
-                            <input type="number" name="src_bytes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Ingress Bytes (Src)</label>
+                            <input type="number" name="src_bytes" placeholder="Payload mass" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Protocol</label>
-                            <select name="protocol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                                <option value="">Select Protocol</option>
-                                <option value="tcp">TCP</option>
-                                <option value="udp">UDP</option>
-                                <option value="icmp">ICMP</option>
-                                <option value="Unknown">Unknown</option>
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Layer 4 Protocol</label>
+                            <select name="protocol" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all py-3 shadow-sm font-bold text-gray-700">
+                                <option value="">Auto-Detect</option>
+                                <option value="tcp">TCP (Transmission Control)</option>
+                                <option value="udp">UDP (Datagram)</option>
+                                <option value="icmp">ICMP (Network Diagnostics)</option>
+                                <option value="Unknown">Other Encapsulated</option>
                             </select>
                         </div>
                     </div>
-                    <div class="flex justify-end">
-                        <button type="submit" name="form_type" value="traffic" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            Analyze Traffic
+                    <div class="flex justify-end pt-4">
+                        <button type="submit" name="form_type" value="traffic" class="inline-flex items-center px-10 py-4 border border-transparent text-sm font-black rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-500/30 transition-all shadow-xl hover:shadow-indigo-200 hover-lift uppercase tracking-widest">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            Execute Analysis
                         </button>
                     </div>
                 </form>
@@ -71,53 +81,57 @@
 
         <!-- Node Categorization Form -->
         <div id="node-form" class="tab-content hidden">
-            <div class="bg-green-500 px-6 py-4 rounded-t-lg">
-                <h2 class="text-xl font-bold text-white">Node Categorization Form</h2>
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-500 px-8 py-6 rounded-t-2xl shadow-lg">
+                <h2 class="text-2xl font-black text-white uppercase tracking-wider">Node Identification</h2>
+                <p class="text-emerald-100 text-xs font-semibold mt-1">Classify network entities based on behavioral signatures</p>
             </div>
-            <div class="bg-white p-6 rounded-b-lg border-x border-b">
-                <form data-form-type="node" class="space-y-6" method="POST">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white/40 backdrop-blur-md p-8 rounded-b-2xl border-x border-b border-gray-100 shadow-inner">
+                <form data-form-type="node" class="space-y-8" method="POST">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">IP Address Range</label>
-                            <input type="text" name="ip_range" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Subnet Range (CIDR)</label>
+                            <input type="text" name="ip_range" placeholder="192.168.1.0/24" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Protocol Type</label>
-                            <select name="protocol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                                <option value="">Select Protocol</option>
-                                <option value="tcp">TCP</option>
-                                <option value="udp">UDP</option>
-                                <option value="mqtt">MQTT</option>
-                                <option value="icmp">ICMP</option>
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Interaction Protocol</label>
+                            <select name="protocol" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all py-3 shadow-sm font-bold text-gray-700">
+                                <option value="">Auto-Detect</option>
+                                <option value="tcp">TCP (Transmission Control)</option>
+                                <option value="udp">UDP (Datagram)</option>
+                                <option value="mqtt">MQTT (IoT Messaging)</option>
+                                <option value="icmp">ICMP (Network Diagnostics)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Packets Sent</label>
-                            <input id="packets_sent" type="number" name="packets_sent" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Tx Packet Count</label>
+                            <input id="packets_sent" type="number" name="packets_sent" placeholder="Cumulative sent count" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Device Type</label>
-                            <select name="device_type" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
-                                <option value="">Select Device Type</option>
-                                <option value="router">Router</option>
-                                <option value="switch">Switch</option>
-                                <option value="server">Server</option>
-                                <option value="workstation">Workstation</option>
-                                <option value="iot">IoT Device</option>
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Reported Device Type</label>
+                            <select name="device_type" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all py-3 shadow-sm font-bold text-gray-700">
+                                <option value="">Select Anchor Type</option>
+                                <option value="router">Edge Router</option>
+                                <option value="switch">Core Switch</option>
+                                <option value="server">Application Server</option>
+                                <option value="workstation">User Workstation</option>
+                                <option value="iot">Embedded IoT</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Traffic Volume</label>
-                            <input id="traffic_volume" type="number" name="traffic_volume" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Total Throughput (B)</label>
+                            <input id="traffic_volume" type="number" name="traffic_volume" placeholder="Total byte volume" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Connection Frequency</label>
-                            <input type="number" name="connection_frequency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Connection Pulse (Hz)</label>
+                            <input type="number" name="connection_frequency" placeholder="Attempts per minute" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                     </div>
-                    <div class="flex justify-end">
-                        <button type="submit" name="form_type" value="node" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            Categorize Node
+                    <div class="flex justify-end pt-4">
+                        <button type="submit" name="form_type" value="node" class="inline-flex items-center px-10 py-4 border border-transparent text-sm font-black rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 transition-all shadow-xl hover:shadow-emerald-200 hover-lift uppercase tracking-widest">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            Apply Categorization
                         </button>
                     </div>
                 </form>
@@ -126,32 +140,33 @@
 
         <!-- Anomaly Detection Form -->
         <div id="anomaly-form" class="tab-content hidden">
-            <div class="bg-red-500 px-6 py-4 rounded-t-lg">
-                <h2 class="text-xl font-bold text-white">Anomaly Detection Form</h2>
+            <div class="bg-gradient-to-r from-rose-600 to-pink-500 px-8 py-6 rounded-t-2xl shadow-lg">
+                <h2 class="text-2xl font-black text-white uppercase tracking-wider">Outlier Detection</h2>
+                <p class="text-rose-100 text-xs font-semibold mt-1">Scan for irregular signatures using isolation forest modeling</p>
             </div>
-            <div class="bg-white p-6 rounded-b-lg border-x border-b">
-                <form data-form-type="anomaly" class="space-y-6" method="POST">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white/40 backdrop-blur-md p-8 rounded-b-2xl border-x border-b border-gray-100 shadow-inner">
+                <form data-form-type="anomaly" class="space-y-8" method="POST">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Packets Sent</label>
-                            <input type="number" name="packets_sent" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Aggregate Packets</label>
+                            <input type="number" name="packets_sent" placeholder="Cumulative sent" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Traffic Volume</label>
-                            <input type="number" name="traffic_volume" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Session Consumption (B)</label>
+                            <input type="number" name="traffic_volume" placeholder="Total byte volume" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Connection Duration (seconds)</label>
-                            <input type="number" name="connection_duration" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Duration Delta (s)</label>
+                            <input type="number" name="connection_duration" placeholder="Active window" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Connection Frequency</label>
-                            <input type="number" name="connection_frequency" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Recurrence Rate</label>
+                            <input type="number" name="connection_frequency" placeholder="Events per cycle" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Protocol Type</label>
-                            <select name="protocol" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
-                                <option value="">Select Protocol</option>
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Transport Protocol</label>
+                            <select name="protocol" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all py-3 shadow-sm font-bold text-gray-700">
+                                <option value="">Auto-Detect</option>
                                 <option value="tcp">TCP</option>
                                 <option value="udp">UDP</option>
                                 <option value="icmp">ICMP</option>
@@ -159,17 +174,20 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Source Bytes</label>
-                            <input type="number" name="src_bytes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Egress Payload (B)</label>
+                            <input type="number" name="src_bytes" placeholder="Source data mass" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">Packet Size (bytes)</label>
-                            <input type="number" name="packet_size" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500">
+                            <label class="block text-xs font-black text-gray-500 uppercase tracking-widest mb-2">Frame Length (B)</label>
+                            <input type="number" name="packet_size" placeholder="MTU aligned" class="block w-full rounded-xl border-gray-200 bg-white/50 focus:border-rose-500 focus:ring-4 focus:ring-rose-500/10 transition-all py-3 shadow-sm font-medium">
                         </div>
                     </div>
-                    <div class="flex justify-end">
-                        <button type="submit" name="form_type" value="anomaly" class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md text-white bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                            Detect Anomalies
+                    <div class="flex justify-end pt-4">
+                        <button type="submit" name="form_type" value="anomaly" class="inline-flex items-center px-10 py-4 border border-transparent text-sm font-black rounded-xl text-white bg-rose-600 hover:bg-rose-700 focus:outline-none focus:ring-4 focus:ring-rose-500/30 transition-all shadow-xl hover:shadow-rose-200 hover-lift uppercase tracking-widest">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            Run Diagnostics
                         </button>
                     </div>
                 </form>

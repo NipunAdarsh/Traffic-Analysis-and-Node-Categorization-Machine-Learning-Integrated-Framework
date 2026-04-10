@@ -25,6 +25,7 @@
     
     <!-- Custom CSS -->
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/design.css') }}" rel="stylesheet">
     
     <script>
         AOS.init();
@@ -99,130 +100,7 @@
     <!-- Particle Background -->
     <div id="particles-js" class="fixed inset-0 -z-10"></div>
 
-    <!-- Navigation -->
-    <!-- <nav class="bg-white/100 backdrop-blur-xl shadow-lg sticky top-0 z-1 full_opacity"> -->
-    <nav class="bg-white/100 shadow-lg sticky top-0 z-1 full_opacity">
-        <div class="relative w-full">
-            <div class="absolute right-5 top-0 h-16 flex items-center space-x-2">
-                {% if 'user' in session %}
-                <span class="text-gray-700">Welcome, {{ session['user'] }}</span>
-                <a href="{{ url_for('main.logout') }}" 
-                   class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 shadow-lg hover:shadow-xl">
-                    Logout
-                </a>
-                {% else %}
-                <a href="{{ url_for('main.login') }}" 
-                   class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-300 shadow-lg hover:shadow-xl">
-                    Login
-                </a>
-                {% endif %}
-            </div>
-            <div class="max-w-7xl mx-auto px-4">
-                <div class="flex justify-between h-16">
-                <!-- Main content starts here -->
-                <div class="flex ml-8">
-                    <div class="flex-shrink-0 flex items-center">
-                        <a href="{{ url_for('main.home') }}" class="text-2xl font-bold text-gray-800 hover:text-indigo-600 transition-colors duration-300">
-                            <svg class="h-8 w-8 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    {% if 'user' in session %}
-                        <a href="{{ url_for('main.home') }}" 
-                           class="{% if request.endpoint == 'main.home' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
-                            Home
-                        </a>
-                        <a href="{{ url_for('main.dashboard') }}"
-                           class="{% if request.endpoint == 'main.dashboard' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
-                            Dashboard
-                        </a>
-                        <a href="{{ url_for('main.input_data') }}"
-                           class="{% if request.endpoint == 'main.input_data' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
-                            Input Data
-                        </a>
-                        <a href="{{ url_for('main.model_report') }}"
-                           class="{% if request.endpoint == 'main.model_report' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
-                            Model Report
-                        </a>
-                    {% endif %}
-                        <a href="{{ url_for('main.about') }}"
-                           class="{% if request.endpoint == 'main.about' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
-                            About
-                        </a>
-                        <a href="{{ url_for('main.contact') }}"
-                           class="{% if request.endpoint == 'main.contact' %}border-b-2 border-indigo-600 text-indigo-600{% else %}text-gray-500 hover:text-indigo-600{% endif %} inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors duration-300">
-                            Contact
-                        </a>
-                    </div>
-                </div>
-                <div class="hidden sm:flex sm:items-center">
-                    <!-- Placeholder for future items -->
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Menu Button -->
-    <div class="fixed top-20 right-4 z-50">
-        <button type="button" id="mobile-menu-button" class="hamburger inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 bg-white/80 backdrop-blur-lg shadow-lg">
-            <span class="sr-only">Open main menu</span>
-            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path class="line1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16" />
-                <path class="line2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12h16" />
-                <path class="line3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 18h16" />
-            </svg>
-        </button>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="mobile-menu fixed inset-y-0 right-0 w-80 bg-white/95 backdrop-blur-lg shadow-lg z-40">
-        <div class="pt-16 px-4">
-            <div class="flex flex-col space-y-4">
-                {% if 'user' in session %}
-                <a href="{{ url_for('main.home') }}" 
-                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
-                    Home
-                </a>
-                <a href="{{ url_for('main.dashboard') }}"
-                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
-                    Dashboard
-                </a>
-                <a href="{{ url_for('main.input_data') }}"
-                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
-                    Input Data
-                </a>
-                <a href="{{ url_for('main.model_report') }}"
-                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
-                    Model Report
-                </a>
-                {% endif %}
-                <a href="{{ url_for('main.about') }}"
-                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
-                    About
-                </a>
-                <a href="{{ url_for('main.contact') }}"
-                   class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-base font-medium">
-                    Contact
-                </a>
-                {% if 'user' in session %}
-                <div class="pt-4 border-t border-gray-200">
-                    <span class="text-gray-700 px-3 py-2 block">Welcome, {{ session['user'] }}</span>
-                    <a href="{{ url_for('main.logout') }}" 
-                       class="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                        Logout
-                    </a>
-                </div>
-                {% else %}
-                <a href="{{ url_for('main.login') }}" 
-                   class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                    Login
-                </a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
+    {% include 'navbar.html' %}
 
     <!-- Main Content -->
     <!-- Flash Messages Container -->
@@ -264,6 +142,8 @@
         {% block content %}{% endblock %}
         </div>
     </main>
+
+    {% include 'footer.html' %}
     
     <!-- Custom JavaScript -->
     <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
@@ -286,6 +166,45 @@
                 mobileMenu.classList.remove('active');
             }
         });
+    </script>
+    
+    <script>
+        // Dark mode toggle
+        var themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        var themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+            document.body.classList.add('dark');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        var themeToggleBtn = document.getElementById('theme-toggle');
+        if(themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function() {
+                themeToggleDarkIcon.classList.toggle('hidden');
+                themeToggleLightIcon.classList.toggle('hidden');
+                
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.body.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        document.body.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    }
+                } else {
+                    if (document.body.classList.contains('dark')) {
+                        document.body.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    } else {
+                        document.body.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
+                }
+            });
+        }
     </script>
     
     {% block extra_js %}{% endblock %}

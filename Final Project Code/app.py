@@ -23,6 +23,11 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///traffic.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
+    # Model paths (used by background loader if .pkl files exist)
+    app.config['TRAFFIC_MODEL_PATH'] = 'traffic_analysis_model.pkl'
+    app.config['NODE_MODEL_PATH'] = 'node_cat_model.pkl'
+    app.config['ANOMALY_MODEL_PATH'] = 'anomaly_detection_model.pkl'
+    
     # Initialize database
     db.init_app(app)
     
@@ -65,16 +70,21 @@ def create_app():
         }
     )
     
-    # Initialize socketio
-    socketio.init_app(app, cors_allowed_origins="*")
+    # Initialize SocketIO with threading mode (compatible with debug/reloader)
+    # NOTE: eventlet async_mode was removed because monkey_patch() at module level
+    # breaks werkzeug's reloader in debug mode, causing the server to hang.
+    # Threading mode works perfectly for the REST-polling dashboard architecture.
+    socketio.init_app(app, cors_allowed_origins="*", async_mode='threading')
     
     # Create and register model manager
     app.model_manager = ModelManager()
-    logger.info("Model Manager initialized")
     
-    # NOTE: Real-time dashboard now uses /api/simulate_packet REST polling
-    # instead of background WebSocket threads (which had eventlet compatibility issues).
-    # The PacketCaptureService is kept for future use with real PyShark interfaces.
+    # Start background model loading (non-blocking, fails gracefully if no .pkl files)
+    app.model_manager.load_models_async(app)
+    logger.info("Model Manager initialized (background loading started)")
+    
+    # NOTE: Real-time dashboard uses /api/simulate_packet REST polling
+    # instead of background WebSocket threads.
     
     # Register blueprints
     app.register_blueprint(main)
@@ -87,3 +97,4 @@ def create_app():
 if __name__ == '__main__':
     app = create_app()
     socketio.run(app, debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+
